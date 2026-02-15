@@ -1,59 +1,100 @@
-# QMK Userspace
+# ⌨️ TiagoCode QMK Userspace
 
-This is a template repository which allows for an external set of QMK keymaps to be defined and compiled. This is useful for users who want to maintain their own keymaps without having to fork the main QMK repository.
+![QMK Userspace](https://img.shields.io/badge/QMK-userspace-1f883d?style=for-the-badge)
+![Split Ergo](https://img.shields.io/badge/Split-Ergonomic-0a66c2?style=for-the-badge)
+![Layers](https://img.shields.io/badge/Layers-6-orange?style=for-the-badge)
 
-## Howto configure your build targets
+One layout philosophy, multiple split keyboards.
 
-1. Run the normal `qmk setup` procedure if you haven't already done so -- see [QMK Docs](https://docs.qmk.fm/#/newbs) for details.
-1. Fork this repository
-1. Clone your fork to your local machine
-1. Enable userspace in QMK config using `qmk config user.overlay_dir="$(realpath qmk_userspace)"`
-1. Add a new keymap for your board using `qmk new-keymap`
-    * This will create a new keymap in the `keyboards` directory, in the same location that would normally be used in the main QMK repository. For example, if you wanted to add a keymap for the Planck, it will be created in `keyboards/planck/keymaps/<your keymap name>`
-    * You can also create a new keymap using `qmk new-keymap -kb <your_keyboard> -km <your_keymap>`
-    * Alternatively, add your keymap manually by placing it in the location specified above.
-    * `layouts/<layout name>/<your keymap name>/keymap.*` is also supported if you prefer the layout system
-1. Add your keymap(s) to the build by running `qmk userspace-add -kb <your_keyboard> -km <your_keymap>`
-    * This will automatically update your `qmk.json` file
-    * Corresponding `qmk userspace-remove -kb <your_keyboard> -km <your_keymap>` will delete it
-    * Listing the build targets can be done with `qmk userspace-list`
-1. Commit your changes
+This repository is my external QMK userspace with consistent, coding-focused keymaps across different split ergonomic boards.
 
-## Howto build with GitHub
+## Highlights
 
-1. In the GitHub Actions tab, enable workflows
-1. Push your changes above to your forked GitHub repository
-1. Look at the GitHub Actions for a new actions run
-1. Wait for the actions run to complete
-1. Inspect the Releases tab on your repository for the latest firmware build
+- Shared 6-layer system across keyboards.
+- Home-row friendly modifiers and tap-hold keys.
+- Fast nav/symbol/num workflows for coding.
+- Per-board extras (OLED, encoders, RGB tuning).
+- Build locally or via GitHub Actions.
 
-## Howto build locally
+## Supported Keymaps
 
-1. Run the normal `qmk setup` procedure if you haven't already done so -- see [QMK Docs](https://docs.qmk.fm/#/newbs) for details.
-1. Fork this repository
-1. Clone your fork to your local machine
-1. `cd` into this repository's clone directory
-1. Set global userspace path: `qmk config user.overlay_dir="$(realpath .)"` -- you MUST be located in the cloned userspace location for this to work correctly
-    * This will be automatically detected if you've `cd`ed into your userspace repository, but the above makes your userspace available regardless of your shell location.
-1. Compile normally: `qmk compile -kb your_keyboard -km your_keymap` or `make your_keyboard:your_keymap`
+| Keyboard | Target | In `qmk.json` |
+| --- | --- | --- |
+| SplitKB Kyria rev3 | `splitkb/kyria/rev3:tiagocode` | Yes |
+| SplitKB Kyria | `splitkb/kyria:tiagocode` | Yes |
+| Corne rev1 | `crkbd/rev1:tiagocode` | Yes |
+| Dasky Reverb | `dasky/reverb:tiagocode` | Yes |
+| SplitKB Aurora Sofle v2 | `splitkb/aurora/sofle_v2:tiagocode` | Yes |
+| SplitKB Aurora Lily58 | `splitkb/aurora/lily58:tiagocode` | Yes |
+| OMKBD ErgoDash | `omkbd/ergodash:tiagocode` | No (keymap exists, optional target) |
 
-Alternatively, if you configured your build targets above, you can use `qmk userspace-compile` to build all of your userspace targets at once.
+## Layer Stack
 
-## Extra info
+| Layer | Purpose |
+| --- | --- |
+| `QWERTY` | Base typing layer |
+| `NAVIGATION` | Arrows, home/end, modifiers, quick nav |
+| `NUMPAD` | Numpad and operators |
+| `SYMBOLS` | Programming symbols and punctuation |
+| `FUNCTIONS` | F-keys and utility access |
+| `ADJUST` | RGB/lighting controls |
 
-If you wish to point GitHub actions to a different repository, a different branch, or even a different keymap name, you can modify `.github/workflows/build_binaries.yml` to suit your needs.
+Common tap-hold aliases used across boards:
 
-To override the `build` job, you can change the following parameters to use a different QMK repository or branch:
+- `NUM_TAB = LT(_NUMPAD, KC_TAB)`
+- `QUO_FUN = LT(_FUNCTIONS, KC_QUOT)`
+- `LCAPS` / `RCAPS` as shift-tap modifiers
+
+## Quick Start
+
+1. Install and initialize QMK CLI (once):
+```bash
+qmk setup
 ```
-    with:
-      qmk_repo: qmk/qmk_firmware
-      qmk_ref: master
+2. Clone this repo and enter it:
+```bash
+git clone <your-fork-url>
+cd qmk_userspace
+```
+3. Point QMK to this userspace:
+```bash
+qmk config user.overlay_dir="$(pwd)"
+```
+4. Ensure `qmk_firmware` home is configured:
+```bash
+qmk config user.qmk_home=/path/to/qmk_firmware
 ```
 
-If you wish to manually manage `qmk_firmware` using git within the userspace repository, you can add `qmk_firmware` as a submodule in the userspace directory instead. GitHub Actions will automatically use the submodule at the pinned revision if it exists, otherwise it will use the default latest revision of `qmk_firmware` from the main repository.
+## Build
 
-This can also be used to control which fork is used, though only upstream `qmk_firmware` will have support for external userspace until other manufacturers update their forks.
+Compile one target:
 
-1. (First time only) `git submodule add https://github.com/qmk/qmk_firmware.git`
-1. (To update) `git submodule update --init --recursive`
-1. Commit your changes to your userspace repository
+```bash
+qmk compile -kb splitkb/kyria/rev3 -km tiagocode
+```
+
+or:
+
+```bash
+make splitkb/kyria/rev3:tiagocode
+```
+
+Compile all targets from `qmk.json`:
+
+```bash
+qmk userspace-compile
+```
+
+## Flash
+
+For boards supported by QMK flashing:
+
+```bash
+qmk flash -kb splitkb/kyria/rev3 -km tiagocode
+```
+
+For UF2-based boards, compile and copy the generated `.uf2` to the boot drive.
+
+## License
+
+GPL-2.0-or-later. See `LICENSE`.
