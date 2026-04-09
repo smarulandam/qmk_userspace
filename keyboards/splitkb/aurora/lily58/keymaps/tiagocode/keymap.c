@@ -15,10 +15,6 @@
  */
 #include QMK_KEYBOARD_H
 
-#if __has_include("keymap.h")
-#    include "keymap.h"
-#endif
-
 enum layers {
     _QWERTY,
     _NAVIGATION,
@@ -87,7 +83,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                    XXXXXXX, XXXXXXX,   KC_UP, XXXXXXX, XXXXXXX, _______,
         _______, KC_LCMD, KC_LCTL, KC_LALT, KC_LSFT, XXXXXXX,                    KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT,  KC_END,  KC_DEL,
         _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  _______, _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                                      ADJS, _______, XXXXXXX,  _______, _______, XXXXXXX,  KC_DEL, KC_BSPC
+                                      ADJS, _______, XXXXXXX,  _______, _______,  KC_DEL, KC_BSPC, XXXXXXX
     ),
 
     /*
